@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src='//code.jquery.com/jquery-1.11.3.min.js'></script>
+        <script src='//code.highcharts.com/highcharts.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js'></script>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'>
+        <style>
+        h1 {
+    font-size: 50px;
+    font-family: "Optima";
+}
+
+        body {background-Color: #B0E0E6
+        }
+        .huge {
+            font-size: 40px;
+        }
+        .panel-green {
+            border-color: #008000;
+        }
+        .panel-green > .panel-heading {
+            border-color: #008000;
+            color: #fff;
+            background-color: #008000;
+        }
+        .panel-green > a {
+            color: #008000;
+        }
+        .panel-green > a:hover {
+            color: #3d8b3d;
+        }
+        .panel-red {
+            border-color: #d9534f;
+        }
+        .panel-red > .panel-heading {
+            border-color: #d9534f;
+            color: #fff;
+            background: #d9534f;
+        }
+        .panel-red > a {
+            color: #d9534f;
+        }
+        .panel-red > a:hover {
+            color: #b52b27;
+        }
+        .panel-yellow {
+            border-color: #f0ad4e;
+        }
+        .panel-yellow > .panel-heading {
+            border-color: #f0ad4e;
+            color: #fff;
+            background: #f0ad4e;
+        }
+        .panel-yellow > a {
+            color: #f0ad4e;
+        }
+        .panel-yellow > a:hover {
+            color: #df8a13;
+        }
+        .iconred{
+        color:#d9534f;
+        }
+        .iconyellow{
+        color:#f0ad4e
+        }
+        .iconblue{
+          color:blue;
+        }
+        .icongreen{
+          color:#3d8b3d;
+        }
+        </style>
+    </head>
+    <body>
+
+        
+        
+        
+    <script>
+        //build chart using options above
+        $(document).ready(function(){
+          Highcharts.setOptions({
+	global: {
+		useUTC: false
+	}
+});
+Highcharts.createElement('link', {
+	href: '//fonts.googleapis.com/css?family=Montserrat',
+	rel: 'stylesheet',
+	type: 'text/css'
+}, null, document.getElementsByTagName('head')[0]);
+// Create the theme
+// http://colorbrewer2.org/ for colors options
+Highcharts.theme = {
+    //default tableau pallette
+     colors: ['#5cb85c', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#CFECF9', '#7F7F7F', '#BCBD22', '#17BECF'],
+    //diverging colors from colorbrewer
+  // colors: ['rgb(178,24,43)','rgb(239,138,98)','rgb(253,219,199)','rgb(224,224,224)','rgb(153,153,153)','rgb(77,77,77)'],
+    //sequential colors
+  //  colors: ['rgb(241,238,246)','rgb(208,209,230)','rgb(166,189,219)','rgb(116,169,207)','rgb(54,144,192)','rgb(5,112,176)','rgb(3,78,123)'],
+    //new PS colors
+    //gradient
+     //colors: ['#E80A89', '#F05A28'],
+    //blue
+    // colors: ['#1A3A68','#4464AD','#527ACC','#B8DCFF' ],
+    //blue - orange
+  //  colors: ['#F05A28','#4464AD' ],
+    chart: {
+        backgroundColor:
+        {
+            linearGradient: [0, 0, 500, 500],
+            stops: [
+                [0, 'rgb(255, 255, 255)'],
+                [1, 'rgb(240, 240, 255)']
+            ]
+        },
+    },
+    title: {
+        style: {
+            color: '#343436',
+            font: '22px Montserrat, sans-serif'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#666666',
+            font: '12px Montserrat, sans-serif'
+        }
+    },
+    credits: {
+      enabled: false
+    },
+    legend: {
+        itemStyle: {
+            font: '9pt Montserrat, sans-serif',
+            color: 'black'
+        },
+        itemHoverStyle:{
+            color: 'gray'
+        }
+    }
+};
+// Apply the theme
+Highcharts.setOptions(Highcharts.theme);
+            getYearlyEnergyChart();
+            
+        setInterval(function()
+      {
+        window.location.reload();
+      },500000);
+        });
+        function getYearlyEnergyChart()
+        {
+          var options = {
+             chart: {
+              renderTo: 'containeryear',
+              type: 'column'
+            
+             },
+             legend:{
+              enabled:false
+             },
+             title:{
+              text: 'Energy Harvested in the Last Year',
+              align: 'center'
+             },
+             subtitle:{
+              text: 'Past Year',
+              align: 'center'
+             },
+             yAxis:{
+              title: {
+                 text: 'Energy in Watt Hour',
+                 
+                 
+              }
+             },
+             xAxis:{
+              type:'datetime',
+              'labels':{
+                 'format':'{value:%b-%y}',
+                 
+              }
+             },
+             series:[{}]
+         };
+         var today = new Date();
+         
+         
+         
+
+         
+         var monthAgo = moment().date(0)._d;
+         var yearAgo = moment().subtract(1,'years').date(1)._d;
+         
+         
+            var startDate = yearAgo.getFullYear() + '-' + (yearAgo.getMonth() +1 ) + '-01';
+            
+           
+         
+         var endDate =   monthAgo.getFullYear() + '-' + (monthAgo.getMonth() +1 ) + '-' + monthAgo.getDate();
+        
+         
+         
+         
+        
+       
+         
+         $.ajax({url: 'https://api.enphaseenergy.com/api/v2/systems/759448/energy_lifetime?start_date=' + startDate + '&end_date=' + endDate + '&key=f758d9b15fe0756996b01601b4ee8360&user_id=4e6a55774e5441770a',
+         async: false, success: function(data){
+         
+        
+         var energyByYearList = [];
+      var rawdata = data.production
+      
+        while (rawdata.length <366) {rawdata.unshift(0)}
+        
+      
+         for(var i = 0  ; i < data.production.length; i++)
+         {
+     
+         
+          energyByYearList.push({
+             monthOfYear: moment(startDate).add(i, 'day'),
+             energy: data.production[i]
+            
+          });
+            }
+        
+        
+        
+         
+        
+         
+         var month1sum = 0;
+         var month2sum = 0;
+         var month3sum = 0;
+         var month4sum = 0;
+         var month5sum = 0;
+         var month6sum = 0;
+         var month7sum = 0;
+         var month8sum = 0;
+         var month9sum = 0;
+         var month10sum = 0;
+         var month11sum = 0;
+         var month12sum = 0;
+         
+         
+        for(var i=0; i< data.production.length; i++){
+        
+        
+         if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).month() ) { month1sum +=  energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(1, 'month').month()  ) { month2sum +=  energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(2, 'month').month()) { month3sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(3, 'month').month()) { month4sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(4, 'month').month()) { month5sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(5, 'month').month()) { month6sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(6, 'month').month()) { month7sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(7, 'month').month()) { month8sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(8, 'month').month()) { month9sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(9, 'month').month()) { month10sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(10, 'month').month()) { month11sum += energyByYearList[i].energy;
+         }
+          if (moment(energyByYearList[i].monthOfYear).month() == moment(startDate).add(11, 'month').month()) { month12sum += energyByYearList[i].energy;
+         }
+         
+         }
+         
+      
+         
+      
+         
+        var energyarray = [month1sum, month2sum, month3sum, month4sum, month5sum, month6sum, month7sum, month8sum, month9sum, month10sum, month11sum, month12sum];  
+          
+         
+        
+         
+         
+         var montharray = [];
+         for (i=0; i<12; i++){
+         montharray[i] = moment(startDate).add(i,'month').unix()*1000;
+         }
+         
+         var energyByYearPlotList = [];
+         for(var i=0; i< 12;i++)
+         {
+          var plotPair = [0,0];
+           
+           
+          plotPair[0] = montharray[i];
+          
+          plotPair[1] = energyarray[i]
+          energyByYearPlotList.push(plotPair);
+         }
+          
+         options.series[0].data= energyByYearPlotList;
+         var chart = new Highcharts.Chart(options);
+      }});
+        }
+        
+       
+        </script>
+             
+        
+        
+        
+        
+        
+        
+        
+        
+       
+     
+        
+        
+        <script>
+        
+        
+        //build chart using options above
+        $(document).ready(function(){
+          Highcharts.setOptions({
+	global: {
+		useUTC: false
+	}
+});
+Highcharts.createElement('link', {
+	href: '//fonts.googleapis.com/css?family=Montserrat',
+	rel: 'stylesheet',
+	type: 'text/css'
+}, null, document.getElementsByTagName('head')[0]);
+// Create the theme
+// http://colorbrewer2.org/ for colors options
+Highcharts.theme = {
+    //default tableau pallette
+     colors: ['#5cb85c', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#CFECF9', '#7F7F7F', '#BCBD22', '#17BECF'],
+    //diverging colors from colorbrewer
+  // colors: ['rgb(178,24,43)','rgb(239,138,98)','rgb(253,219,199)','rgb(224,224,224)','rgb(153,153,153)','rgb(77,77,77)'],
+    //sequential colors
+  //  colors: ['rgb(241,238,246)','rgb(208,209,230)','rgb(166,189,219)','rgb(116,169,207)','rgb(54,144,192)','rgb(5,112,176)','rgb(3,78,123)'],
+    //new PS colors
+    //gradient
+     //colors: ['#E80A89', '#F05A28'],
+    //blue
+    // colors: ['#1A3A68','#4464AD','#527ACC','#B8DCFF' ],
+    //blue - orange
+  //  colors: ['#F05A28','#4464AD' ],
+    chart: {
+        backgroundColor:
+        {
+            linearGradient: [0, 0, 500, 500],
+            stops: [
+                [0, 'rgb(255, 255, 255)'],
+                [1, 'rgb(240, 240, 255)']
+            ]
+        },
+    },
+    title: {
+        style: {
+            color: '#343436',
+            font: '22px Montserrat, sans-serif'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#666666',
+            font: '12px Montserrat, sans-serif'
+        }
+    },
+    credits: {
+      enabled: false
+    },
+    legend: {
+        itemStyle: {
+            font: '9pt Montserrat, sans-serif',
+            color: 'black'
+        },
+        itemHoverStyle:{
+            color: 'gray'
+        }
+    }
+};
+// Apply the theme
+Highcharts.setOptions(Highcharts.theme);
+            getMonthlyEnergyChart();
+            
+            
+        setInterval(function()
+      {
+        window.location.reload();
+      },500000);
+        });
+        function getMonthlyEnergyChart()
+        {
+          var options = {
+             chart: {
+               renderTo: 'containermonth',
+               type: 'areaspline'
+             },
+             legend:{
+               enabled:false
+             },
+             title:{
+               text: 'Energy Harvested in the Last Month',
+               align: 'center'
+             },
+             subtitle:{
+               text: 'Past Month',
+               align: 'center'
+             },
+             yAxis:{
+               title: {
+                 text: 'Energy in Watt Hour'
+               }
+             },
+             xAxis:{
+                
+               type:'datetime',
+               'labels':{
+                 'format':'{value:%e-%b}'
+               }
+             },
+             series:[{}]
+         };
+         var today = new Date();
+         var monthAgo = moment().subtract(1,'month')._d;
+         var startDate = monthAgo.getFullYear() + '-' + (monthAgo.getMonth() + 1) + '-' + monthAgo.getDate();
+         var endDate =   today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+         
+         
+       
+         
+         
+         
+         
+        $.ajax({url: 'https://api.enphaseenergy.com/api/v2/systems/759448/energy_lifetime?start_date=' + startDate + '&end_date=' + endDate + '&key=f758d9b15fe0756996b01601b4ee8360&user_id=4e6a55774e5441770a',
+         async: false, success: function(data){
+         var energyByMonthList = [];
+         for(var i=0; i< data.production.length; i++)
+         {
+           energyByMonthList.push({
+             dayOfWeek: moment(startDate).add(i, 'day').unix()*1000,
+             energy: data.production[i]
+           });
+         }
+         var energyByMonthPlotList = [];
+         for(var i=0; i< energyByMonthList.length;i++)
+         {
+           var plotPair = [0,0];
+           plotPair[0] = energyByMonthList[i].dayOfWeek;
+           plotPair[1] = parseInt(energyByMonthList[i].energy);
+           energyByMonthPlotList.push(plotPair);
+         }
+        
+         options.series[0].data= energyByMonthPlotList;
+         var chart = new Highcharts.Chart(options);
+       }});
+        }
+       
+        
+        
+        
+        
+        </script>
+        
+        
+        
+        
+        
+          <script>
+        //build chart using options above
+        $(document).ready(function(){
+          Highcharts.setOptions({
+	global: {
+		useUTC: false
+	}
+});
+Highcharts.createElement('link', {
+	href: '//fonts.googleapis.com/css?family=Montserrat',
+	rel: 'stylesheet',
+	type: 'text/css'
+}, null, document.getElementsByTagName('head')[0]);
+// Create the theme
+// http://colorbrewer2.org/ for colors options
+Highcharts.theme = {
+    //default tableau pallette
+     colors: ['#5cb85c', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#CFECF9', '#7F7F7F', '#BCBD22', '#17BECF'],
+    //diverging colors from colorbrewer
+  // colors: ['rgb(178,24,43)','rgb(239,138,98)','rgb(253,219,199)','rgb(224,224,224)','rgb(153,153,153)','rgb(77,77,77)'],
+    //sequential colors
+  //  colors: ['rgb(241,238,246)','rgb(208,209,230)','rgb(166,189,219)','rgb(116,169,207)','rgb(54,144,192)','rgb(5,112,176)','rgb(3,78,123)'],
+    //new PS colors
+    //gradient
+     //colors: ['#E80A89', '#F05A28'],
+    //blue
+    // colors: ['#1A3A68','#4464AD','#527ACC','#B8DCFF' ],
+    //blue - orange
+  //  colors: ['#F05A28','#4464AD' ],
+    chart: {
+        backgroundColor:
+        {
+            linearGradient: [0, 0, 500, 500],
+            stops: [
+                [0, 'rgb(255, 255, 255)'],
+                [1, 'rgb(240, 240, 255)']
+            ]
+        },
+    },
+    title: {
+        style: {
+            color: '#343436',
+            font: '22px Montserrat, sans-serif'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#666666',
+            font: '12px Montserrat, sans-serif'
+        }
+    },
+    credits: {
+      enabled: false
+    },
+    legend: {
+        itemStyle: {
+            font: '9pt Montserrat, sans-serif',
+            color: 'black'
+        },
+        itemHoverStyle:{
+            color: 'gray'
+        }
+    }
+};
+// Apply the theme
+Highcharts.setOptions(Highcharts.theme);
+            getWeeklyEnergyChart();
+            getCurrentEnergySummary();
+        setInterval(function()
+      {
+        window.location.reload();
+      },500000);
+        });
+        function getWeeklyEnergyChart()
+        {
+          var options = {
+             chart: {
+              renderTo: 'containerweek',
+              type: 'line'
+             },
+             legend:{
+              enabled:false
+             },
+             title:{
+              text: 'Energy Harvested in the Last Week',
+              align: 'center'
+             },
+             subtitle:{
+              text: 'Past 7 Days',
+              align: 'center'
+             },
+             yAxis:{
+              title: {
+                 text: 'Energy in Watt Hour'
+              }
+             },
+             xAxis:{
+                
+              type:'datetime',
+              'labels':{
+                 'format':'{value:%e-%b}'
+              }
+              
+            
+             },
+             series:[{ 
+             
+             }]
+         };
+         var today = new Date();
+         var weekAgo = moment().subtract(7,'days')._d;
+         var startDate = weekAgo.getFullYear() + '-' + (weekAgo.getMonth() + 1) + '-' + weekAgo.getDate();
+         var endDate =   today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+         $.ajax({url: 'https://api.enphaseenergy.com/api/v2/systems/759448/energy_lifetime?start_date=' + startDate + '&end_date=' + endDate + '&key=f758d9b15fe0756996b01601b4ee8360&user_id=4e6a55774e5441770a',
+        async: false, success: function(data){
+         var energyByWeekList = [];
+         for(var i=0; i< data.production.length; i++)
+         {
+          energyByWeekList.push({
+             dayOfWeek: moment(startDate).add(i, 'day').unix()*1000,
+             energy: data.production[i]
+          });
+         }
+         
+         
+        
+         
+         
+         
+         
+         
+         
+         
+         var zonedecrease = [];
+         var zonepoint = [];
+         for(var i=0; i< 6; i++) {
+      if (energyByWeekList[i].energy < energyByWeekList[i + 1].energy) { zonedecrease.push(i) }}
+       
+         
+         for (var i=0; i < zonedecrease.length; i++) { zonepoint.push(energyByWeekList[i].dayOfWeek); }
+      
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         var energyByWeekPlotList = [];
+         for(var i=0; i< energyByWeekList.length;i++)
+         {
+          var plotPair = [0,0];
+          plotPair[0] = energyByWeekList[i].dayOfWeek;
+          plotPair[1] = parseInt(energyByWeekList[i].energy);
+          energyByWeekPlotList.push(plotPair);
+         }
+        
+         options.series[0].data= energyByWeekPlotList;
+         var chart = new Highcharts.Chart(options);
+      }});
+        }
+        function getCurrentEnergySummary()
+        {
+          var today = new Date();
+          var currentDate =   today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+          $.ajax({url:'https://api.enphaseenergy.com/api/v2/systems/759448/summary?summary_date=' + currentDate + '&key=f758d9b15fe0756996b01601b4ee8360&user_id=4e6a55774e5441770a',
+          async: false, success: function(data){
+        {
+          var current_power = data.current_power;
+          $('#currentPower').html(current_power);
+          var energy_today = data.energy_today;
+          $('#energyToday').html(energy_today);
+          var energy_lifetime = data.energy_lifetime;
+          $('#energyLifetime').html(energy_lifetime);
+          var active_modules = data.modules;
+          $('#activeModules').html(active_modules);
+        }
+      ;
+    }})}
+        </script>
+        
+				  
+				  
+        
+        <h1><b><center>EIC Display Chart</center></b></h1>
+        
+        
+        
+        
+        </br>
+        
+        
+        
+        
+        
+        
+        <div id='containerweek'  style='min-width: 1150px; max-width: 1150px; height: 200px; margin: 0 auto'></div>
+    
+        
+        </br>
+        
+        </br>
+       
+        <div id='containermonth'  style='min-width: 1150px; max-width: 1150px;height: 200px; margin: 0 auto'></div>
+               
+       
+        </br>
+        </br>
+
+        <div id='containeryear'  style='min-width: 1150px; max-width: 1150px; height: 200px; margin: 0 auto'></div>
+       
+        </br>
+        
+         <div class='col-lg-3 col-md-6'>
+        <div class='panel panel-primary'>
+          <div class='panel-heading'>
+            <h3 class='panel-title'>Current Power (W)</h3>
+          </div>
+          <div class='row'>
+            <div class='col-xs-3'>
+              <i class='fa fa-battery-three-quarters fa-4x iconblue'></i>
+            </div>
+            <div class='col-xs-9 text-right'>
+              <div id='currentPower' class='huge'></div>
+            </div>
+          </div>
+      </div>
+      </div>
+      
+      <div class='col-lg-3 col-md-6'>
+      <div class='panel panel-green'>
+          <div class='panel-heading'>
+            <h3 class='panel-title'>Energy Produced Today (Wh)</h3>
+          </div>
+          <div class='row'>
+            <div class='col-xs-3'>
+              <i class='fa fa-bolt fa-4x icongreen'></i>
+            </div>
+            <div class = 'col-xs-3 text-left'>
+            </div>
+            <div class='col-xs-9 text-right'>
+                <div id = 'energyToday'  class='huge'></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+      <div class='col-lg-3 col-md-6'>
+       <div class='panel panel-yellow'>
+         <div class='panel-heading'>
+           <h3 class='panel-title'>Energy Harvested Lifetime kWh</h3>
+         </div>
+         <div class='row'>
+           <div class='col-xs-3'>
+             <i class='fa  fa-area-chart fa-4x iconyellow'></i>
+           </div>
+           <div class='col-xs-3 text-right'>
+             <div id='energyLifetime' class='huge'></div>
+           </div>
+         </div>
+       </div>
+     </div>
+     
+     <div class='col-lg-3 col-md-6'>
+      <div class='panel panel-red'>
+          <div class='panel-heading'>
+            <h3 class='panel-title'>Number of Active Modules</h3>
+          </div>
+          <div class='row'>
+            <div class='col-xs-3'>
+              <i class='fa fa-cogs fa-4x red'></i>
+            </div>
+            <div class='col-xs-3 text-right'>
+              <div id='activeModules' class='huge'></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      </br>
+      </br>
+      </br>
+      </br>
+      <center>
+      <div   class="small-8 small-centered medium-5 large-uncentered columns">
+					  	
+            <a href="http://engineering.tamu.edu/"><img class="logo" src="http://engineering.tamu.edu/media/1755540/engineering-logo.png" alt="Dwight Look College of Engineering Logo" title="Dwight Look College of Engineering Logo"></a>
+
+	  </div>
+	  </center>
+	  </br>
+      
+      <h5 style = "color:white"><center>Created by EPICS Engr 270 EIC Display Team</center></h5>
+      
+
+    </body>
+</html>

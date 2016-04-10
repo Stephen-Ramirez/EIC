@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="//code.highcharts.com/highcharts.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+        </head>
+        
+        
+        
+
+
+
+
+<script>
+
+function getMonthlyWeeklyEnergyChart()
+         {
+           var options = {
+             chart: {
+               renderTo: 'containertwo',
+               type: 'areaspline'
+             },
+             legend:{
+               enabled:false
+             },
+             title:{
+               text: 'Energy consumption in the last month',
+               align: 'center'
+             },
+            //  subtitle:{
+            //   text: 'past 7 days',              need to have a better subitile, will come up with one later
+            //   align: 'center'
+            //  },
+             yAxis:{
+               title: {
+                 text: 'Energy'
+               }
+             },
+             xAxis:{
+               type:'datetime',
+               "labels":{
+                 "format":"{value:%e-%b}" // may need to change these label modifiers 
+                 // can change it to be Mon - DD to Mon - DD
+               }
+             },
+             series:[{}]
+         };
+           
+           
+           var today = new Date();
+           var weekAgo = moment().subtract(7,'days')._d; 
+           var twoWeeksAgo = moment().subtract(14,'days')._d;
+           var threeweeksAgo = moment().subtract(21,'days')._d;
+           var fourWeeksAgo = moment().subtract(28,'days')._d;
+           // these are considered true at all times
+           // now must find end of the month depending on the month
+           var endOfMonth;
+           
+           
+           if( today.getMonth() == 0 || today.getMonth() == 2 || today.getMonth() == 4 || today.getMonth() == 6 || 
+           today.getMonth() == 7 ||  today.getMonth() == 9 ||  today.getMonth() == 11)
+           {
+            // gets all the months that have 31 days
+            // months from 0 to 11
+            endOfMonth = moment().subtract(31,'days')._d;
+        
+           }
+           else if(  today.getMonth() == 3 || today.getMonth() ==5 ||  today.getMonth() == 8 ||  today.getMonth() == 10)
+           {
+               // gets all the months that have 30 days
+               // monts are from 0 to 11
+               endOfMonth = moment().subtract(30, 'days')._d;
+               
+           }
+           else if(leapYear(today.getFullYear()))
+           {
+               // checks to see if its a leap year
+               endOfMonth = moment().subtract(29,'days')._d;
+               
+           }
+           else
+           {
+               // for february if its a normal year 
+               endOfMonth = fourWeeksAgo;
+           }
+         
+         // now that we have all of the months data we can call Json and do the same way as weekly
+         // now getting values between so many days ago and today
+         
+         var startDate = endOfMonth.getFullYear() + "-" + (endOfMonth.getMonth() + 1) + "-" + endOfMonth.getDate();
+         var endDate =   today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+         
+          $.getJSON('https://api.enphaseenergy.com/api/v2/systems/759448/energy_lifetime?start_date='+startDate+'&end_date='+endDate+'&key=f758d9b15fe0756996b01601b4ee8360&user_id=4e6a55774e5441770a',function(data) 
+           {
+               var energyByDayList = [];
+               var monthlyEnergyByWeekList = [];
+               var adduct = 0 ;
+            //   var weekOne;
+            //   var weekTwo;
+            //   var weekThree;
+            //   var weekFour;
+            //   var leftOver;
+               
+               for(var i = 0; i < data.production.length; i++ )
+               {
+                  energyByDayList.push({
+                  dayOfWeek: moment(startDate).add(i, 'day').unix()*1000,
+                  energy: data.production[i]
+                    });
+                }
+                // gets a value for every day over past and puts into array with time stamp
+                // now must create weekly lists
+                
+                for(var i = 0; i < data.production.length; i++) // may have to rework and work backwards, update tomorrow with experimental info
+                { 
+                    // data prod from 0 to data.production.length
+                    
+                    adduct = adduct + parseInt(data.production[i]); // adds up everything
+                    
+                    if( i % 6 == 0 && i % 13 != 0 ) //makes it so that only first week is taken
+                    {
+                        monthlyEnergyByWeekList.push({
+                            startDay: endOfMonth.unix()*1000, // date of the first week taken 4 weeks ago
+                            energy: adduct // energy of that first week 
+                        }); 
+                        
+                    }
+                    else if( i % 13 == 0 && i % 20 != 0) // makes it so that only the second week is taken
+                    {
+                        monthlyEnergyByWeekList.push([
+                            startDay: moment(endOfMonth).add(7,'day').unix()*1000,
+                            energy: adduct - weekOne
+                            ]); // gets only weekTwo data
+                    }
+                    else if( i % 20 == 0 && i % 27 != 0 ) //only gets the third week
+                    {
+                        monthlyEnergyByWeekList.push({ 
+                            startDay: moment(endOfMonth).add(14,'day').unix*1000,
+                            energy: adduct - weekOne - weekTwo;
+                        });
+                    }
+                    else if( i % 27 == 0 ) // only gets fourth week, cant have anything else 
+                    {
+                        monthlyEnergyByWeekList.push({ 
+                            startDay: moment(endOfMonth).add(21,'day').unix*1000,
+                            energy: adduct - weekOne - weekTwo - weekThree;
+                        });
+                    }
+                    else // gets leftovers 
+                    {
+                        monthlyEnergyByWeekList.push({ 
+                            startDay: moment(endOfMonth).add(28,'day').unix*1000,
+                            energy: adduct - weekOne - weekTwo - weekThree - weekFour;
+                        });
+                    }
+                }
+                
+                for( var i = 0; )
+                
+                var energyByWeekPlotList = [];
+                //creating plotable pairs from above
+                for(var i=0; i< 5; i++) // will only have a max of 5 data points, 4 weeks + 1 leftover
+                 {
+                   var plotPair = [0,0];
+                   plotPair[0] = monthlyEnergyByWeekList[i].startDay;
+                   plotPair[1] = monthlyEnergyByWeekList[i].energy);
+                   energyByDayListPlotList.push(plotPair);
+                 }
+                
+                 //bug check
+                options.series[0].data= energyByDayListPlotList;
+                var chart = new Highcharts.Chart(options);
+              
+            });
+           
+         };
+         
+         </script>
+         
+         <div id = "container"></div>
