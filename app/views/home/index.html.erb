@@ -12,7 +12,7 @@
     font-family: "Optima";
 }
 
-        body {background-Color: #B0E0E6
+        body {background-Color: #FFF;
         }
         .huge {
             font-size: 40px;
@@ -676,34 +676,13 @@ Highcharts.setOptions(Highcharts.theme);
         </br>
         
         
-        
-        
-        
-        
-        <div id='containerweek'  style='min-width: 1150px; max-width: 1150px; height: 200px; margin: 0 auto'></div>
-    
-        
-        </br>
-        
-        </br>
-       
-        <div id='containermonth'  style='min-width: 1150px; max-width: 1150px;height: 200px; margin: 0 auto'></div>
-               
-       
-        </br>
-        </br>
-
-        <div id='containeryear'  style='min-width: 1150px; max-width: 1150px; height: 200px; margin: 0 auto'></div>
-       
-        </br>
-        
-         <div class='col-lg-3 col-md-6'>
+        <div class='col-lg-3 col-md-6'>
         <div class='panel panel-primary'>
           <div class='panel-heading'>
             <h3 class='panel-title'>Current Power (W)</h3>
           </div>
           <div class='row'>
-            <div class='col-xs-3'>
+            <div style = "padding: 3px 0px 3px 20px ;" class='col-xs-3'>
               <i class='fa fa-battery-three-quarters fa-4x iconblue'></i>
             </div>
             <div class='col-xs-9 text-right'>
@@ -719,7 +698,8 @@ Highcharts.setOptions(Highcharts.theme);
             <h3 class='panel-title'>Energy Produced Today (Wh)</h3>
           </div>
           <div class='row'>
-            <div class='col-xs-3'>
+            <div style = "padding: 3px 0px 3px 20px ;" class='col-xs-3'>
+               
               <i class='fa fa-bolt fa-4x icongreen'></i>
             </div>
             <div class = 'col-xs-3 text-left'>
@@ -737,10 +717,10 @@ Highcharts.setOptions(Highcharts.theme);
            <h3 class='panel-title'>Energy Lifetime (Wh)</h3>
          </div>
          <div class='row'>
-           <div class='col-xs-3'>
+           <div style = "padding: 3px 0px 3px 20px ;" class='col-xs-3'>
              <i class='fa  fa-area-chart fa-4x iconyellow'></i>
            </div>
-           <div class='col-xs-3 text-right'>
+           <div class='col-xs-9 text-right'>
              <div id='energyLifetime' class='huge'></div>
            </div>
          </div>
@@ -753,15 +733,32 @@ Highcharts.setOptions(Highcharts.theme);
             <h3 class='panel-title'>Pairs of active solar panels</h3>
           </div>
           <div class='row'>
-            <div class='col-xs-3'>
-              <i class='fa fa-cogs fa-4x red'></i>
+            <div style = "padding: 3px 0px 3px 20px ;" class='col-xs-3'>
+              <i class='fa fa-cogs fa-4x iconred'></i>
             </div>
-            <div class='col-xs-3 text-right'>
+            <div class='col-xs-9 text-right'>
               <div id='activeModules' class='huge'></div>
             </div>
           </div>
         </div>
       </div>
+        
+        </br>
+        </br>
+        
+        
+        <div id='containerweek'  style='min-width: 320px; max-width: 1150px; min-height: 100px; max-height: 250px; margin-bottom: 100px'></div>
+    
+        
+        <div id='containermonth'  style='min-width: 320px; max-width: 1150px; min-height: 100px; max-height: 250px; margin-top: 100px; margin-bottom: 100px'></div>
+               
+       
+
+        <div id='containeryear'  style='min-width: 320px; max-width: 1150px; height: 200px; margin: 0 auto'></div>
+       
+        </br>
+        
+         
       
       </br>
       </br>
@@ -776,7 +773,7 @@ Highcharts.setOptions(Highcharts.theme);
 	  
 	  </br>
       
-      <h5 style = "color:white"><center>Created by EPICS Engr 270 EIC Display Team</center></h5>
+      <h5 style = "color:black"><center>Created by EPICS Engr 270 EIC Display Team</center></h5>
       
 
     </body>
